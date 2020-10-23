@@ -1,24 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
 
-function App() {
+
+import Weather from './Weather';
+
+const App = () => {
+
+  const [dados, setDados] = useState(null); 
+  const [cidade, setCidade] = useState({ value: '' });
+
+  function handleChange(event) {
+    setCidade({ value: event.target.value });
+  }
+
+  console.log("Armazenado" + cidade.value);
+
+  async function handleSubmit(event) {
+    alert('A cidade procurada é: ' + cidade.value);
+    const response = await fetch(
+      'https://api.openweathermap.org/data/2.5/weather?q='+cidade.value+'&appid=EnterYourAppId'
+    );
+    const json = await response.json();
+    setDados(json);
+    event.preventDefault();
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div> 
+        <input 
+          type="text"
+          value={cidade.value}
+          onChange={handleChange}
+        />
+
+        <Button onClick={handleSubmit} type="submit" variant="outline-success">Procurar</Button>
+
+        {/* <button onClick={handleSubmit} type="submit">Submeter</button> */}
+      {cidade && dados && <Weather dados={dados} />}
     </div>
   );
 }
